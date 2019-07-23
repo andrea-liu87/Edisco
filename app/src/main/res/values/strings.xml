@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Edisco</string>
+
+    <!--Text related to the application message-->
+    <string name="quota_message">You have received your quota for this month</string>
+    <string name="no_text_message">No text found in this image</string>
+    <string name="error_message">Error on reading this message</string>
+
+    <!--String related to layout-->
+    <string name="image_taken">Image taken</string>
+    <string name="read_me_button">READ ME</string>
+</resources>

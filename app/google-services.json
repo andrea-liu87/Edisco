@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1013256107336",
+    "firebase_url": "https://edisco-466e6.firebaseio.com",
+    "project_id": "edisco-466e6",
+    "storage_bucket": "edisco-466e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013256107336:android:8d80387fc75e73ce",
+        "android_client_info": {
+          "package_name": "com.andreasgift.edisco"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013256107336-l2841m4c8ht341jm9pr12hccv1tjp1hu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuaA_9cZ3ubFiDrAK0BgIXVRRWVvPpdS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013256107336-l2841m4c8ht341jm9pr12hccv1tjp1hu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
