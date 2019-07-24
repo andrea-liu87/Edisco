@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -14,8 +15,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -31,7 +34,11 @@ import com.google.firebase.ml.vision.document.FirebaseVisionCloudDocumentRecogni
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText;
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentTextRecognizer;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private TextToSpeech tts;
 
-    private Bitmap samplebitmap;
+    private String imagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
 
         image = findViewById(R.id.image_view);
         textView = findViewById(R.id.text_view);
-        samplebitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.samplebitmap);
     }
 
     /**
@@ -75,7 +81,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public void OnClick (View v){
         if (unitRead <= freeQuota) {
-            getPicture();
+            try {
+                getPicture();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             textView.setText(getResources().getText(R.string.quota_message));
             textToSpeech(getString(R.string.quota_message), getString(R.string.error_message));
@@ -87,20 +97,38 @@ public class MainActivity extends AppCompatActivity {
      * This method will called intent to take picture
      * Upon success, it will call extractText() to process the image and read any text from it
      */
-    private void getPicture() {
+    private void getPicture() throws IOException {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = createImageFile();
         if (takePictureIntent.resolveActivity(getPackageManager()) != null){
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this,
+                    "com.andreasgift.edisco", photoFile));
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        imagePath = image.getAbsolutePath();
+        return image;
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap tempInput = (Bitmap) extras.get("data");
-            image.setImageBitmap(tempInput);
-            extractText(tempInput);
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            image.setImageBitmap(bitmap);
+            extractText(bitmap);
         }
     }
 
@@ -187,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
             tts.shutdown();
         }
         image.setImageBitmap(null);
+        imagePath = null;
         textView.setText(null);
     }
 }
