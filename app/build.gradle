@@ -6,9 +6,6 @@ android {
     signingConfigs {
         release {
             storeFile file('/media/andrea/Folders/Android-Project/Keystores/edisco.jks')
-            storePassword 'Keystore'
-            keyAlias = 'Keystore'
-            keyPassword 'Keystore'
         }
     }
     compileSdkVersion 29
